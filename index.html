@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bioelectricity Tracker</title>
+    <title>Bioelectricity & Chakra Tracker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -28,18 +28,41 @@
             margin-top: 20px;
             color: #28a745;
         }
+        .chakra {
+            margin: 5px;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Bioelectricity Tracker</h1>
+        <h1>Bioelectricity & Chakra Tracker</h1>
+        
         <label for="minutes">Minutes Cultivated Today:</label>
         <input type="number" id="minutes" placeholder="Minutes" min="1" required><br>
+
+        <h3>Chakra-Specific Cultivation:</h3>
+        <div class="chakra">Base Chakra <input type="number" id="base" placeholder="Minutes"></div>
+        <div class="chakra">Sacral Chakra <input type="number" id="sacral" placeholder="Minutes"></div>
+        <div class="chakra">Solar Plexus Chakra <input type="number" id="solar" placeholder="Minutes"></div>
+        <div class="chakra">Heart Chakra <input type="number" id="heart" placeholder="Minutes"></div>
+        <div class="chakra">Throat Chakra <input type="number" id="throat" placeholder="Minutes"></div>
+        <div class="chakra">Third Eye Chakra <input type="number" id="thirdEye" placeholder="Minutes"></div>
+        <div class="chakra">Crown Chakra <input type="number" id="crown" placeholder="Minutes"></div>
+
         <label for="key">Encryption Key:</label>
-        <input type="password" id="encryptionKey" placeholder="Enter your key" required><br>
+        <input type="password" id="encryptionKey" placeholder="Enter key for encryption"><br>
+
         <button onclick="addCultivation()">Add Cultivation</button>
+        <button onclick="saveData()">Save (Encrypt)</button>
+        <button onclick="loadData()">Load (Decrypt)</button>
+        <button onclick="resetData()">Reset Data</button>
+        
         <p>Current Bioelectricity Level:</p>
         <div id="bioelectricity">0</div>
+        
+        <p><strong>Chakra Energy Levels</strong></p>
+        <div id="chakraLevels"></div>
     </div>
     <script src="tracker.js"></script>
 </body>
