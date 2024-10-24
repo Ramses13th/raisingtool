@@ -1,37 +1,3 @@
-// AES Encryption and Decryption Functions (using SubtleCrypto)
-async function encryptData(key, data) {
-    const encoded = new TextEncoder().encode(data);
-    const encrypted = await crypto.subtle.encrypt(
-        { name: "AES-GCM", iv: new Uint8Array(12) },
-        key,
-        encoded
-    );
-    return btoa(String.fromCharCode(...new Uint8Array(encrypted)));
-}
-
-async function decryptData(key, data) {
-    const decoded = Uint8Array.from(atob(data), c => c.charCodeAt(0));
-    const decrypted = await crypto.subtle.decrypt(
-        { name: "AES-GCM", iv: new Uint8Array(12) },
-        key,
-        decoded
-    );
-    return new TextDecoder().decode(decrypted);
-}
-
-// Generate AES-GCM key from user input
-async function getKeyFromPassword(password) {
-    const encoded = new TextEncoder().encode(password);
-    const key = await crypto.subtle.importKey(
-        "raw",
-        encoded,
-        { name: "AES-GCM" },
-        false,
-        ["encrypt", "decrypt"]
-    );
-    return key;
-}
-
 // Default bioelectricity and chakra levels
 let bioelectricity = 10;
 let chakraLevels = {
@@ -83,40 +49,25 @@ function updateChakraLevelsDisplay() {
     document.getElementById("chakraLevels").innerHTML = chakraOutput;
 }
 
-// Function to save data (encrypt and store in localStorage)
-async function saveData() {
-    const encryptionKey = document.getElementById("encryptionKey").value;
-    if (!encryptionKey) {
-        alert("Please enter an encryption key to save data.");
-        return;
-    }
-    
-    const key = await getKeyFromPassword(encryptionKey);
+// Function to generate a unique data key (ID) and save data as JSON
+function saveData() {
     const data = JSON.stringify({ bioelectricity, chakraLevels });
-    const encryptedData = await encryptData(key, data);
-    
-    localStorage.setItem("bioelectricityData", encryptedData);
-    alert("Data saved and encrypted.");
+    const dataKey = btoa(data); // Base64 encoding as a key
+    alert(`Your Data Key: ${dataKey}`);
 }
 
-// Function to load data (decrypt from localStorage)
-async function loadData() {
-    const encryptionKey = document.getElementById("encryptionKey").value;
-    if (!encryptionKey) {
-        alert("Please enter the correct encryption key to load data.");
+// Function to load data from a provided key
+function loadData() {
+    const dataKey = document.getElementById("dataKey").value;
+    if (!dataKey) {
+        alert("Please enter a valid data key.");
         return;
     }
-    
-    const key = await getKeyFromPassword(encryptionKey);
-    const encryptedData = localStorage.getItem("bioelectricityData");
-    if (!encryptedData) {
-        alert("No saved data found.");
-        return;
-    }
-    
+
     try {
-        const decryptedData = await decryptData(key, encryptedData);
-        const parsedData = JSON.parse(decryptedData);
+        const decodedData = atob(dataKey); // Decode Base64 key
+        const parsedData = JSON.parse(decodedData);
+        
         bioelectricity = parsedData.bioelectricity;
         chakraLevels = parsedData.chakraLevels;
         
@@ -124,7 +75,7 @@ async function loadData() {
         updateChakraLevelsDisplay();
         alert("Data loaded successfully.");
     } catch (error) {
-        alert("Invalid decryption key or corrupted data.");
+        alert("Invalid data key.");
     }
 }
 
@@ -133,7 +84,6 @@ function resetData() {
     if (confirm("Are you sure you want to reset all data?")) {
         bioelectricity = 10;
         chakraLevels = { base: 0, sacral: 0, solar: 0, heart: 0, throat: 0, thirdEye: 0, crown: 0 };
-        localStorage.removeItem("bioelectricityData");
         
         updateBioelectricityDisplay();
         updateChakraLevelsDisplay();
