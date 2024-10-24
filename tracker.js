@@ -10,10 +10,10 @@ let chakraLevels = {
     crown: 0
 };
 
-// Function to add cultivation minutes to bioelectricity and chakras
+// Function to add cultivation minutes and chakra reps
 function addCultivation() {
     const minutes = parseInt(document.getElementById("minutes").value);
-    const chakraInputs = {
+    const chakraReps = {
         base: parseInt(document.getElementById("base").value) || 0,
         sacral: parseInt(document.getElementById("sacral").value) || 0,
         solar: parseInt(document.getElementById("solar").value) || 0,
@@ -23,13 +23,14 @@ function addCultivation() {
         crown: parseInt(document.getElementById("crown").value) || 0,
     };
     
-    // Formula for bioelectricity: increase progressively based on cultivation minutes
+    // Formula for bioelectricity: increase progressively based on cultivation minutes and chakra reps
     const growthFactor = 1 + (bioelectricity / 10000);
     bioelectricity += minutes * growthFactor;
 
-    // Add chakra-specific cultivation
-    for (const chakra in chakraInputs) {
-        chakraLevels[chakra] += chakraInputs[chakra] * growthFactor;
+    // Chakra reps also contribute to bioelectricity
+    for (const chakra in chakraReps) {
+        bioelectricity += chakraReps[chakra] * (growthFactor * 0.5); // Reps give half the increase of minutes
+        chakraLevels[chakra] += chakraReps[chakra] * growthFactor;
     }
 
     updateBioelectricityDisplay();
