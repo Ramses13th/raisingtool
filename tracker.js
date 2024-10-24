@@ -32,56 +32,117 @@ async function getKeyFromPassword(password) {
     return key;
 }
 
-// Function to retrieve and decrypt bioelectricity data from localStorage
-async function getBioelectricity(key) {
-    const encryptedData = localStorage.getItem("bioelectricityData");
-    if (!encryptedData) return 10; // Start at 10 points if no data exists
-    try {
-        const decrypted = await decryptData(key, encryptedData);
-        return parseFloat(decrypted);
-    } catch {
-        alert("Invalid decryption key");
-        return 0;
-    }
-}
+// Default bioelectricity and chakra levels
+let bioelectricity = 10;
+let chakraLevels = {
+    base: 0,
+    sacral: 0,
+    solar: 0,
+    heart: 0,
+    throat: 0,
+    thirdEye: 0,
+    crown: 0
+};
 
-// Function to encrypt and store bioelectricity data in localStorage
-async function saveBioelectricity(key, bioelectricity) {
-    const encrypted = await encryptData(key, bioelectricity.toString());
-    localStorage.setItem("bioelectricityData", encrypted);
-}
-
-// Function to calculate and update bioelectricity level based on cultivation minutes
-async function addCultivation() {
+// Function to add cultivation minutes to bioelectricity and chakras
+function addCultivation() {
     const minutes = parseInt(document.getElementById("minutes").value);
-    const encryptionKey = document.getElementById("encryptionKey").value;
-    if (!minutes || minutes < 1 || !encryptionKey) {
-        alert("Please enter valid minutes and encryption key.");
-        return;
+    const chakraInputs = {
+        base: parseInt(document.getElementById("base").value) || 0,
+        sacral: parseInt(document.getElementById("sacral").value) || 0,
+        solar: parseInt(document.getElementById("solar").value) || 0,
+        heart: parseInt(document.getElementById("heart").value) || 0,
+        throat: parseInt(document.getElementById("throat").value) || 0,
+        thirdEye: parseInt(document.getElementById("thirdEye").value) || 0,
+        crown: parseInt(document.getElementById("crown").value) || 0,
+    };
+    
+    // Formula for bioelectricity: increase progressively based on cultivation minutes
+    const growthFactor = 1 + (bioelectricity / 10000);
+    bioelectricity += minutes * growthFactor;
+
+    // Add chakra-specific cultivation
+    for (const chakra in chakraInputs) {
+        chakraLevels[chakra] += chakraInputs[chakra] * growthFactor;
     }
 
-    const key = await getKeyFromPassword(encryptionKey);
-    let currentBioelectricity = await getBioelectricity(key);
-
-    // Formula: start with small increases, but the more bioelectricity you have, the more it grows
-    const growthFactor = 1 + (currentBioelectricity / 10000); // Growth factor based on current bioelectricity
-    currentBioelectricity += minutes * growthFactor; // More minutes, more bioelectricity
-
-    await saveBioelectricity(key, currentBioelectricity);
-    updateBioelectricityDisplay(currentBioelectricity);
+    updateBioelectricityDisplay();
+    updateChakraLevelsDisplay();
 }
 
-// Function to update the display of current bioelectricity
-function updateBioelectricityDisplay(bioelectricity) {
+// Function to update the bioelectricity display
+function updateBioelectricityDisplay() {
     document.getElementById("bioelectricity").innerText = bioelectricity.toFixed(2);
 }
 
-// Load and decrypt bioelectricity data on page load
-window.onload = async function() {
-    const encryptionKey = prompt("Enter your encryption key to load bioelectricity data:");
-    if (encryptionKey) {
-        const key = await getKeyFromPassword(encryptionKey);
-        const bioelectricity = await getBioelectricity(key);
-        updateBioelectricityDisplay(bioelectricity);
+// Function to update the chakra levels display
+function updateChakraLevelsDisplay() {
+    const chakraOutput = Object.keys(chakraLevels).map(chakra => {
+        return `${chakra.charAt(0).toUpperCase() + chakra.slice(1)} Chakra: ${chakraLevels[chakra].toFixed(2)}<br>`;
+    }).join("");
+    document.getElementById("chakraLevels").innerHTML = chakraOutput;
+}
+
+// Function to save data (encrypt and store in localStorage)
+async function saveData() {
+    const encryptionKey = document.getElementById("encryptionKey").value;
+    if (!encryptionKey) {
+        alert("Please enter an encryption key to save data.");
+        return;
     }
+    
+    const key = await getKeyFromPassword(encryptionKey);
+    const data = JSON.stringify({ bioelectricity, chakraLevels });
+    const encryptedData = await encryptData(key, data);
+    
+    localStorage.setItem("bioelectricityData", encryptedData);
+    alert("Data saved and encrypted.");
+}
+
+// Function to load data (decrypt from localStorage)
+async function loadData() {
+    const encryptionKey = document.getElementById("encryptionKey").value;
+    if (!encryptionKey) {
+        alert("Please enter the correct encryption key to load data.");
+        return;
+    }
+    
+    const key = await getKeyFromPassword(encryptionKey);
+    const encryptedData = localStorage.getItem("bioelectricityData");
+    if (!encryptedData) {
+        alert("No saved data found.");
+        return;
+    }
+    
+    try {
+        const decryptedData = await decryptData(key, encryptedData);
+        const parsedData = JSON.parse(decryptedData);
+        bioelectricity = parsedData.bioelectricity;
+        chakraLevels = parsedData.chakraLevels;
+        
+        updateBioelectricityDisplay();
+        updateChakraLevelsDisplay();
+        alert("Data loaded successfully.");
+    } catch (error) {
+        alert("Invalid decryption key or corrupted data.");
+    }
+}
+
+// Function to reset all data
+function resetData() {
+    if (confirm("Are you sure you want to reset all data?")) {
+        bioelectricity = 10;
+        chakraLevels = { base: 0, sacral: 0, solar: 0, heart: 0, throat: 0, thirdEye: 0, crown: 0 };
+        localStorage.removeItem("bioelectricityData");
+        
+        updateBioelectricityDisplay();
+        updateChakraLevelsDisplay();
+        alert("All data has been reset.");
+    }
+}
+
+// Initialize display on load
+window.onload = function() {
+    updateBioelectricityDisplay();
+    updateChakraLevelsDisplay();
 };
