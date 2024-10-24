@@ -93,6 +93,10 @@
                 font-size: 20px;
             }
         }
+        #dataKeyDisplay {
+            display: none;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
@@ -124,6 +128,12 @@
 
         <h3>Your Data Key:</h3>
         <input type="text" id="dataKey" placeholder="Enter your data key to load data">
+        
+        <div id="dataKeyDisplay">
+            <p><strong>Copy this Key to Save Your Data:</strong></p>
+            <input type="text" id="generatedKey" readonly>
+            <button onclick="copyToClipboard()">Copy to Clipboard</button>
+        </div>
     </div>
     <script src="tracker.js"></script>
 </body>
