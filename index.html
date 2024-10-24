@@ -45,21 +45,53 @@
             padding: 12px;
             width: 100%;
             margin-bottom: 10px;
-            background-color: #28a745;
-            color: #fff;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
             transition: background-color 0.3s ease;
         }
-        button:hover {
+        .add-btn {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .add-btn:hover {
+            background-color: #0056b3;
+        }
+        .save-btn {
+            background-color: #28a745;
+            color: #fff;
+        }
+        .save-btn:hover {
             background-color: #218838;
+        }
+        .load-btn {
+            background-color: #ffc107;
+            color: #fff;
+        }
+        .load-btn:hover {
+            background-color: #e0a800;
+        }
+        .reset-btn {
+            background-color: #dc3545;
+            color: #fff;
+        }
+        .reset-btn:hover {
+            background-color: #c82333;
         }
         #bioelectricity, #chakraLevels {
             margin-top: 20px;
             font-size: 18px;
             color: #333;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                max-width: 90%;
+            }
+            h1 {
+                font-size: 20px;
+            }
         }
     </style>
 </head>
@@ -70,19 +102,19 @@
         <label for="minutes">Minutes Cultivated Today:</label>
         <input type="number" id="minutes" placeholder="Minutes" min="1" required><br>
 
-        <h3>Chakra-Specific Cultivation:</h3>
-        <div class="chakra">Base Chakra <input type="number" id="base" placeholder="Minutes"></div>
-        <div class="chakra">Sacral Chakra <input type="number" id="sacral" placeholder="Minutes"></div>
-        <div class="chakra">Solar Plexus Chakra <input type="number" id="solar" placeholder="Minutes"></div>
-        <div class="chakra">Heart Chakra <input type="number" id="heart" placeholder="Minutes"></div>
-        <div class="chakra">Throat Chakra <input type="number" id="throat" placeholder="Minutes"></div>
-        <div class="chakra">Third Eye Chakra <input type="number" id="thirdEye" placeholder="Minutes"></div>
-        <div class="chakra">Crown Chakra <input type="number" id="crown" placeholder="Minutes"></div>
+        <h3>Chakra-Specific Reps (Bija Mantras):</h3>
+        <div class="chakra">Base Chakra <input type="number" id="base" placeholder="Reps"></div>
+        <div class="chakra">Sacral Chakra <input type="number" id="sacral" placeholder="Reps"></div>
+        <div class="chakra">Solar Plexus Chakra <input type="number" id="solar" placeholder="Reps"></div>
+        <div class="chakra">Heart Chakra <input type="number" id="heart" placeholder="Reps"></div>
+        <div class="chakra">Throat Chakra <input type="number" id="throat" placeholder="Reps"></div>
+        <div class="chakra">Third Eye Chakra <input type="number" id="thirdEye" placeholder="Reps"></div>
+        <div class="chakra">Crown Chakra <input type="number" id="crown" placeholder="Reps"></div>
 
-        <button onclick="addCultivation()">Add Cultivation</button>
-        <button onclick="saveData()">Save Data</button>
-        <button onclick="loadData()">Load Data</button>
-        <button onclick="resetData()">Reset Data</button>
+        <button class="add-btn" onclick="addCultivation()">Add Cultivation</button>
+        <button class="save-btn" onclick="saveData()">Save Data</button>
+        <button class="load-btn" onclick="loadData()">Load Data</button>
+        <button class="reset-btn" onclick="resetData()">Reset Data</button>
 
         <p><strong>Bioelectricity Level:</strong></p>
         <div id="bioelectricity">0</div>
