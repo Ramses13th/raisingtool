@@ -10,17 +10,22 @@ let chakraLevels = {
     crown: 0
 };
 
+// Ensure the input values are valid numbers or default to 0 to prevent NaN issues
+function getInputValue(id) {
+    return parseInt(document.getElementById(id).value) || 0;
+}
+
 // Function to add cultivation minutes and chakra reps
 function addCultivation() {
-    const minutes = parseInt(document.getElementById("minutes").value);
+    const minutes = getInputValue("minutes");
     const chakraReps = {
-        base: parseInt(document.getElementById("base").value) || 0,
-        sacral: parseInt(document.getElementById("sacral").value) || 0,
-        solar: parseInt(document.getElementById("solar").value) || 0,
-        heart: parseInt(document.getElementById("heart").value) || 0,
-        throat: parseInt(document.getElementById("throat").value) || 0,
-        thirdEye: parseInt(document.getElementById("thirdEye").value) || 0,
-        crown: parseInt(document.getElementById("crown").value) || 0,
+        base: getInputValue("base"),
+        sacral: getInputValue("sacral"),
+        solar: getInputValue("solar"),
+        heart: getInputValue("heart"),
+        throat: getInputValue("throat"),
+        thirdEye: getInputValue("thirdEye"),
+        crown: getInputValue("crown"),
     };
     
     // Formula for bioelectricity: increase progressively based on cultivation minutes and chakra reps
@@ -54,10 +59,18 @@ function updateChakraLevelsDisplay() {
 function saveData() {
     const data = JSON.stringify({ bioelectricity, chakraLevels });
     const dataKey = btoa(data); // Base64 encoding as a key
-    alert(`Your Data Key: ${dataKey}`);
+
+    // Display the data key
+    document.getElementById("dataKeyDisplay").innerText = dataKey;
+
+    // Copy to clipboard
+    navigator.clipboard.writeText(dataKey).then(() => {
+        alert("Data key copied to clipboard!");
+    }).catch(() => {
+        alert("Unable to copy data key to clipboard.");
+    });
 }
 
-// Function to load data from a provided key
 function loadData() {
     const dataKey = document.getElementById("dataKey").value;
     if (!dataKey) {
@@ -69,6 +82,7 @@ function loadData() {
         const decodedData = atob(dataKey); // Decode Base64 key
         const parsedData = JSON.parse(decodedData);
         
+        // Load the data into the app
         bioelectricity = parsedData.bioelectricity;
         chakraLevels = parsedData.chakraLevels;
         
